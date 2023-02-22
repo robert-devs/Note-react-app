@@ -1,4 +1,6 @@
 import React, { useRef, useState } from 'react'
+import { v4 as uuidV4 } from 'uuid'
+
 import {
   Button,
   Col,
@@ -11,12 +13,15 @@ import {
 } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import CreatableReactSelect from 'react-select/creatable'
+import { NoteData, Tag } from './App'
 
 type NoteFormProps = {
-  onSubmit: (data: NoteDta) => void
+  onSubmit: (data: NoteData) => void
+   onAddTag: (tags: Tag) => void
+  availableTags: Tag[]
 }
 
-export default function NoteForm({ onSubmit }: NoteFormProps) {
+export default function NoteForm({ onSubmit,onAddTag,availableTags }: NoteFormProps) {
   const titleRef = useRef<HTMLInputElement>(null)
   const markdownRef = useRef<HTMLTextAreaElement>(null)
   const [selectedTags, setSelectedTags] = useState<Tag[]>([])
@@ -26,7 +31,7 @@ export default function NoteForm({ onSubmit }: NoteFormProps) {
     onSubmit: ({
       title: titleRef.current!.value,
       markdown: markdownRef.current?.value,
-      tags: [],
+      tags: selectedTags
     })
   }
   return (
@@ -43,10 +48,27 @@ export default function NoteForm({ onSubmit }: NoteFormProps) {
             <FormGroup controlId="tags">
               <FormLabel>Tags</FormLabel>
               <CreatableReactSelect
+                onCreateOption={(label) => {
+                  const newTag = { id: uuidV4(), label }
+                  onAddTag(newTag)
+                  setSelectedTags((prev) => [...prev, newTag])
+                }}
                 isMulti
                 value={selectedTags.map((tag) => {
-                  return {label:tags.label,value: tag.id}
+                  return { label: tag.label, value: tag.id }
                 })}
+                options={availableTags.map((tag)=>{
+                  return{
+                    label:tag.label,value:tag.id
+                  }
+                })}
+                onChange={(tags) => {
+                  setSelectedTags(
+                    tags.map((tag) => {
+                      return { label: tag.label, id: tag.value }
+                    }),
+                  )
+                }}
               />
             </FormGroup>
           </Col>
