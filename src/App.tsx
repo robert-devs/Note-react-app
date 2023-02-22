@@ -65,6 +65,7 @@ function App() {
             path="/new"
             element={
               <NewNote
+                // notes={notesWithTags}
                 onSubmit={onCreateNote}
                 onAddTag={addTag}
                 availableTags={tags}

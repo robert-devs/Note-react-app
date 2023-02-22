@@ -1,5 +1,6 @@
-import React, { useRef, useState } from 'react'
+import React, { FocusEvent, FormEvent, useRef, useState } from 'react'
 import { v4 as uuidV4 } from 'uuid'
+import { useNavigate } from 'react-router-dom'
 
 import {
   Button,
@@ -17,23 +18,32 @@ import { NoteData, Tag } from './App'
 
 type NoteFormProps = {
   onSubmit: (data: NoteData) => void
-   onAddTag: (tags: Tag) => void
+  onAddTag: (tags: Tag) => void
   availableTags: Tag[]
 }
 
-export default function NoteForm({ onSubmit,onAddTag,availableTags }: NoteFormProps) {
+export default function NoteForm({
+  onSubmit,
+  onAddTag,
+  availableTags,
+}: NoteFormProps) {
   const titleRef = useRef<HTMLInputElement>(null)
   const markdownRef = useRef<HTMLTextAreaElement>(null)
   const [selectedTags, setSelectedTags] = useState<Tag[]>([])
+  const navigate = useNavigate()
 
-  function handleSubmit(e: FocusEvent) {
+  function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    onSubmit: ({
+
+    onSubmit({
       title: titleRef.current!.value,
-      markdown: markdownRef.current?.value,
-      tags: selectedTags
+      markdown: markdownRef.current!.value,
+      tags: selectedTags,
     })
+
+    navigate('..')
   }
+
   return (
     <Form onSubmit={handleSubmit}>
       <Stack gap={4}>
@@ -57,9 +67,10 @@ export default function NoteForm({ onSubmit,onAddTag,availableTags }: NoteFormPr
                 value={selectedTags.map((tag) => {
                   return { label: tag.label, value: tag.id }
                 })}
-                options={availableTags.map((tag)=>{
-                  return{
-                    label:tag.label,value:tag.id
+                options={availableTags.map((tag) => {
+                  return {
+                    label: tag.label,
+                    value: tag.id,
                   }
                 })}
                 onChange={(tags) => {
