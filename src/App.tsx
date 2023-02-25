@@ -6,9 +6,9 @@ import { NewNote } from './NewNote'
 import { useLocalStorage } from './useLocalStorage'
 import { v4 as uuid4 } from 'uuid'
 import { NoteLayout } from './NoteLayout'
-import Note from './Note'
 import { EditNote } from './EditNote'
 import { NoteList } from './NoteList'
+import { Note } from './Note'
 
 export type Note = {
   id: string
